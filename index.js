@@ -4,8 +4,17 @@ const cors = require('cors');  // Import cors middleware
 
 const app = express();
 
-// Use CORS middleware to allow requests from any origin
-app.use(cors());
+// Define CORS middleware
+const customCorsMiddleware = (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://gopro-app.vercel.app'); // Your frontend URL
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+};
+
+// Apply CORS middleware
+app.use(customCorsMiddleware);
 
 // Handle root URL to avoid "Cannot GET /" error
 app.get('/', (req, res) => {
@@ -14,10 +23,10 @@ app.get('/', (req, res) => {
 
 // Proxy API requests
 app.use('/api', createProxyMiddleware({
-    target: 'http://10.5.5.9:8080', // Your GoPro API server
+    target: 'http://10.5.5.9:8080', // GoPro API server
     changeOrigin: true,
     pathRewrite: {
-        '^/api': '', // Remove the '/api' prefix before forwarding the request
+        '^/api': '',  // Remove /api prefix
     },
 }));
 
