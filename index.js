@@ -7,6 +7,12 @@ const app = express();
 // Use CORS middleware to allow requests from any origin
 app.use(cors());
 
+// Handle root URL to avoid "Cannot GET /" error
+app.get('/', (req, res) => {
+    res.send('Proxy server is running!');
+});
+
+// Proxy API requests
 app.use('/api', createProxyMiddleware({
     target: 'http://10.5.5.9:8080', // Your GoPro API server
     changeOrigin: true,
