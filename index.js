@@ -22,11 +22,11 @@ app.get('/', (req, res) => {
 });
 
 // Proxy API requests with event handling
-app.use('/api', createProxyMiddleware({
-    target: 'http://10.5.5.9:8080', // GoPro API server
+app.use('/data', createProxyMiddleware({
+    target: 'http://192.168.1.17:3000', // GoPro API server
     changeOrigin: true,
     pathRewrite: {
-        '^/api': '',  // Remove /api prefix
+        '^/data': '',  // Remove /api prefix
     },
     on: {
 
