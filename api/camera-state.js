@@ -1,7 +1,8 @@
-import fetch from 'node-fetch'; // Ensure you have 'node-fetch' installed
-
 export default async (req, res) => {
     try {
+        // Dynamically import node-fetch
+        const { default: fetch } = await import('node-fetch');
+
         // Fetch data from your backend server
         const response = await fetch('http://10.5.5.9:8080/gopro/camera/state');
         const data = await response.json();
