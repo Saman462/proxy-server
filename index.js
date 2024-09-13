@@ -22,6 +22,9 @@ app.use('/api', createProxyMiddleware({
     target: 'http://10.5.5.9:8080',  // GoPro API server
     changeOrigin: true,
     secure: false,
+    pathRewrite: {
+        '^/api': '', // Rewrite API path
+    },
     on: {
         proxyRes: (proxyRes, req, res) => {
             // Add necessary CORS headers to the proxy response
@@ -40,4 +43,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Proxy server running on port ${PORT}`);
 });
-
