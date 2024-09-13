@@ -23,7 +23,7 @@ app.use('/api', createProxyMiddleware({
     changeOrigin: true,
     secure: false,
     pathRewrite: {
-        '^/api': '', // Rewrite API path
+        '^/api': '/gopro', // Rewrite path from /api to /gopro
     },
     on: {
         proxyRes: (proxyRes, req, res) => {
