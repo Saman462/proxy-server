@@ -1,43 +1,22 @@
-const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
-const cors = require('cors');
+import fetch from 'node-fetch'; // Ensure you have 'node-fetch' installed
 
-const app = express();
+export default async (req, res) => {
+    try {
+        // Fetch data from your backend server
+        const response = await fetch('http://10.5.5.9:8080/gopro/camera/state');
+        const data = await response.json();
 
-// CORS Middleware to handle cross-origin requests
-app.use(cors({
-    origin: 'https://gopro-app.vercel.app', // Your frontend domain
-    credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
-}));
+        // Set CORS headers
+        res.setHeader('Access-Control-Allow-Origin', 'https://gopro-app.vercel.app');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-// Handle root URL to avoid "Cannot GET /" error
-app.get('/', (req, res) => {
-    res.send('Proxy server is running!');
-});
-
-// Proxy API requests to the GoPro server
-app.use('/api', createProxyMiddleware({
-    target: 'http://10.5.5.9:8080', // Proxy target server
-    changeOrigin: true,
-    secure: false,
-    pathRewrite: {
-        '^/api': '/gopro', // Rewrite path from /api to /gopro
-    },
-    on: {
-        proxyRes: (proxyRes, req, res) => {
-
-            res.setHeader('Access-Control-Allow-Origin', 'https://gopro-app.vercel.app');
-            res.setHeader('Access-Control-Allow-Credentials', 'true');
-            res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-        },
-
+        // Send the response back to the client
+        res.status(200).json(data);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-}));
+};
 
-const PORT = 5000;
-app.listen(PORT, () => {
-    console.log(`Proxy server running on port ${PORT}`);
-});
